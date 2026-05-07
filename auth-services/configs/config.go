@@ -18,6 +18,7 @@ type Config struct {
 	JWTTTL              time.Duration
 	RateLimitMaxAttempt int
 	RateLimitWindow     time.Duration
+	LoginEnabled        bool
 }
 
 func Load() Config {
@@ -36,6 +37,7 @@ func Load() Config {
 		JWTTTL:              time.Duration(jwtTTLMinutes) * time.Minute,
 		RateLimitMaxAttempt: rateLimitMax,
 		RateLimitWindow:     time.Duration(rateLimitWindow) * time.Minute,
+		LoginEnabled:        getEnv("AUTH_LOGIN_ENABLED", "false") == "true",
 	}
 
 	if cfg.JWTSecret == "" {
