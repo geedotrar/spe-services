@@ -1,0 +1,47 @@
+name: CI-CD
+
+on:
+  pull_request:
+    branches: [master, staging]
+  push:
+    branches: [master, staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  ci-auth:
+    name: CI Auth Service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: auth-services/go.mod
+          cache-dependency-path: auth-services/go.sum
+
+      - name: Download dependencies
+        working-directory: auth-services
+        run: go mod download
+
+      - name: Run tests
+        working-directory: auth-services
+        run: go test ./... -v
+
+      - name: Build binary
+        working-directory: auth-services
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o auth-service ./cmd
+
+      - name: Upload auth binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-service-binary
+          path: auth-services/auth-service
