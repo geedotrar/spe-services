@@ -50,6 +50,7 @@ docker compose exec -T postgres psql -U postgres -d spe -f /dev/stdin < database
 # Payment schema
 docker compose exec -T postgres psql -U postgres -d spe -f /dev/stdin < database/migrations/payment/001_init_payment.sql
 docker compose exec -T postgres psql -U postgres -d spe -f /dev/stdin < database/migrations/payment/002_optimize_indexes_payment.sql
+docker compose exec -T postgres psql -U postgres -d spe -f /dev/stdin < database/migrations/payment/003_transaction_event_logs.sql
 ```
 
 ### 4. Run seed
