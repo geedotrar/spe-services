@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS merchants (
+    id BIGSERIAL PRIMARY KEY,
+    merchant_id VARCHAR(32) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    secret_hash TEXT NOT NULL,
+    signing_key TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS access_tokens (
+    id UUID PRIMARY KEY,
+    merchant_id VARCHAR(32) NOT NULL,
+    token_id UUID NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
