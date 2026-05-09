@@ -10,11 +10,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d spe"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -22,13 +17,31 @@ services:
     ports:
       - "6379:6379"
 
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: spe-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
   auth-service:
     build:
       context: ./auth-services
     container_name: spe-auth-service
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_started
       redis:
         condition: service_started
     env_file:
@@ -37,6 +50,24 @@ services:
       - ./auth-services/.env:/app/.env:ro
     ports:
       - "9090:9090"
+
+  payment-service:
+    build:
+      context: ./payment-services
+    container_name: spe-payment-service
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      kafka:
+        condition: service_started
+    env_file:
+      - ./payment-services/.env
+    volumes:
+      - ./payment-services/.env:/app/.env:ro
+    ports:
+      - "9091:9091"
 
 volumes:
   postgres_data:

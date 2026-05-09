@@ -1,0 +1,256 @@
+{
+  "info": {
+    "_postman_id": "d34a8114-0825-4b04-afad-bf9301159b56",
+    "name": "SPE Payment POC",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "45524217",
+    "_collection_link": "https://go.postman.co/collection/45524217-d34a8114-0825-4b04-afad-bf9301159b56?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth - Issue Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"merchant_id\": \"{{merchant_id}}\",\n  \"merchant_secret\": \"{{merchant_secret}}\"\n}"
+        },
+        "url": {
+          "raw": "{{auth_base_url}}/auth/token",
+          "host": [
+            "{{auth_base_url}}"
+          ],
+          "path": [
+            "auth",
+            "token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Payment - Transaction Notification",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "X-Signature",
+            "value": "{{notification_signature}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"request_id\": \"XwVjF5zfuHhrDZuw\",\n  \"customer_pan\": \"9360001110000000019\",\n  \"amount\": 10000.00,\n  \"transaction_datetime\": \"2021-02-25T13:36:13Z\",\n  \"rrn\": \"123456789012\",\n  \"bill_number\": \"12345678901234567890\",\n  \"customer_name\": \"John Doe\",\n  \"merchant_id\": \"008800223497\",\n  \"merchant_name\": \"Sukses Makmur Bendungan Hilir\",\n  \"merchant_city\": \"Jakarta Pusat\",\n  \"currency_code\": \"360\",\n  \"payment_status\": \"00\",\n  \"payment_description\": \"Payment Success\"\n}"
+        },
+        "url": {
+          "raw": "{{payment_base_url}}/transaction-notification",
+          "host": [
+            "{{payment_base_url}}"
+          ],
+          "path": [
+            "transaction-notification"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Payment - Check Status",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "X-Signature",
+            "value": "{{check_status_signature}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"request_id\": \"XwVjF5zfuHhrDZuw\",\n  \"bill_number\": \"12345678901234567890\"\n}"
+        },
+        "url": {
+          "raw": "{{payment_base_url}}/check-status",
+          "host": [
+            "{{payment_base_url}}"
+          ],
+          "path": [
+            "check-status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[DEV] Generate Notification Signature",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"request_id\": \"XwVjF5zfuHhrDZuw\",\n  \"rrn\": \"123456789012\",\n  \"merchant_id\": \"008800223497\",\n  \"key\": \"speskilltest\"\n}"
+        },
+        "url": {
+          "raw": "{{payment_base_url_dev}}/dev/signature",
+          "host": [
+            "{{payment_base_url_dev}}"
+          ],
+          "path": [
+            "dev",
+            "signature"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[DEV] Generate Check Status Signature",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bill_number\": \"12345678901234567890\",\n  \"key\": \"speskilltest\"\n}"
+        },
+        "url": {
+          "raw": "{{payment_base_url_dev}}/dev/signature",
+          "host": [
+            "{{payment_base_url_dev}}"
+          ],
+          "path": [
+            "dev",
+            "signature"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[DEV] Auth PING",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{auth_base_url_dev}}/ping",
+          "host": [
+            "{{auth_base_url_dev}}"
+          ],
+          "path": [
+            "ping"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[DEV] Payment PING",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{payment_base_url_dev}}/ping",
+          "host": [
+            "{{payment_base_url_dev}}"
+          ],
+          "path": [
+            "ping"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_base_url",
+      "value": "http://localhost:9090/api/v1"
+    },
+    {
+      "key": "payment_base_url",
+      "value": "http://localhost:9091/api/v1"
+    },
+    {
+      "key": "auth_base_url_dev",
+      "value": "http://localhost:9090"
+    },
+    {
+      "key": "payment_base_url_dev",
+      "value": "http://localhost:9091"
+    },
+    {
+      "key": "merchant_id",
+      "value": "008800223497"
+    },
+    {
+      "key": "merchant_secret",
+      "value": "merchant-secret"
+    },
+    {
+      "key": "token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjaGFudF9pZCI6IjAwODgwMDIyMzQ5NyIsInN1YiI6IjAwODgwMDIyMzQ5NyIsImV4cCI6MTc3ODMxNTAxNiwiaWF0IjoxNzc4MzExNDE2LCJqdGkiOiJiNDg0NzY2Ny00MmIxLTQwZjEtYWI1OC1lYjdlNjBkZTc4NWQifQ.XEWe178DyVvSv0hrRE-DwInmDDJxPriVppFoEcw6YD0"
+    },
+    {
+      "key": "notification_signature",
+      "value": "hvBOwXntUjXfUf9Zjvd8hFttRFpQJ0hUNguVFYsNfheMKaAS9ATiDogdTDVPxr3Kks81M6uEegBtiBVNc7DZeg=="
+    },
+    {
+      "key": "check_status_signature",
+      "value": "wFNj9/5f3ATl4DPkXXH4UU3m3y3ZNfG9gID1EYO+DXJcsF+lLs5guZR3uu0HJ/ECn+/KVwG42kMUVOEOuvZlgQ=="
+    }
+  ]
+}
