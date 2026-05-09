@@ -1,7 +1,7 @@
 # SPE - Payment Services POC
 
-MORE DETAILS 
-read: https://github.com/geedotrar/spe-services/blob/master/TECH_DOC.md
+MORE DETAILS:
+- read: https://github.com/geedotrar/spe-services/blob/master/TECH_DOC.md
 
 Payment Services POC:
 - Auth service on port 9090
