@@ -33,6 +33,8 @@ services:
         condition: service_started
     env_file:
       - ./auth-services/.env
+    volumes:
+      - ./auth-services/.env:/app/.env:ro
     ports:
       - "9090:9090"
 

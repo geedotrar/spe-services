@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"auth-services/configs"
 	"auth-services/helpers"
 	"auth-services/services"
 	"errors"
@@ -15,6 +16,7 @@ type AuthHandlerInterface interface {
 
 type AuthHandler struct {
 	authService services.AuthServiceInterface
+	cfg         configs.Config
 }
 
 type TokenRequest struct {
@@ -30,11 +32,15 @@ type TokenResponse struct {
 	ExpiresIn   int64  `json:"expires_in"`
 }
 
-func NewAuthHandler(authService *services.AuthService) *AuthHandler {
-	return &AuthHandler{authService: authService}
+func NewAuthHandler(authService *services.AuthService, cfg configs.Config) *AuthHandler {
+	return &AuthHandler{authService: authService, cfg: cfg}
 }
 
 func (handler *AuthHandler) IssueToken(ctx *gin.Context) {
+	if !handler.cfg.LoginEnabled {
+		helpers.JSONError(ctx, http.StatusServiceUnavailable, "03", "auth service temporarily disabled")
+		return
+	}
 	var request TokenRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		helpers.JSONError(ctx, http.StatusBadRequest, "01", "invalid request payload")

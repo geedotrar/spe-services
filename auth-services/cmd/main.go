@@ -36,7 +36,7 @@ func main() {
 	merchantRepository := repositories.NewMerchantRepository(db)
 	tokenRepository := repositories.NewTokenRepository(db)
 	authService := services.NewAuthService(merchantRepository, tokenRepository, cfg.JWTSecret, int64(cfg.JWTTTL.Minutes()))
-	authHandler := handlers.NewAuthHandler(authService)
+	authHandler := handlers.NewAuthHandler(authService, cfg)
 
 	engine := gin.New()
 	engine.Use(gin.Logger(), gin.Recovery())
